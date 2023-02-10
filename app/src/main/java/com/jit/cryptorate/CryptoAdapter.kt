@@ -8,8 +8,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jit.cryptorate.data.Data
 import com.jit.cryptorate.databinding.CustomLayoutBinding
+import javax.inject.Inject
 
-class CryptoAdapter:ListAdapter<Data,CryptoAdapter.CryptoHolder>(DiffUtilCall) {
+class CryptoAdapter @Inject constructor():ListAdapter<Data,CryptoAdapter.CryptoHolder>(DiffUtilCall) {
 
     inner class CryptoHolder(private val binding: CustomLayoutBinding):RecyclerView.ViewHolder(binding.root){
         fun bind(cryptoData: Data){

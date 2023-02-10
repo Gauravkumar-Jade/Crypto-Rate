@@ -1,16 +1,16 @@
 package com.jit.cryptorate
 
 import android.app.Application
-import com.jit.cryptorate.database.CryptoDatabase
-import com.jit.cryptorate.network.CryptoApi
-import com.jit.cryptorate.repository.CryptoRepository
+import com.jit.cryptorate.di.CryptoComponent
+import com.jit.cryptorate.di.DaggerCryptoComponent
 
 class CryptoApplication:Application() {
 
-    val repository:CryptoRepository by lazy {
-        CryptoRepository(
-            CryptoApi.retrofitService,
-            CryptoDatabase.getDatabase(applicationContext),
-            applicationContext)
+    lateinit var cryptoComponent: CryptoComponent
+
+    override fun onCreate() {
+        super.onCreate()
+
+        cryptoComponent = DaggerCryptoComponent.factory().create(this)
     }
 }

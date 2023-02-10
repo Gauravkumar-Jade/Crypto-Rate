@@ -1,16 +1,19 @@
 package com.jit.cryptorate.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.jit.cryptorate.data.CryptoData
 import com.jit.cryptorate.repository.CryptoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.jit.cryptorate.data.Data
+import com.jit.cryptorate.utils.NetworkResult
 
 class CryptoViewModel(private val repository: CryptoRepository):ViewModel() {
 
     init {
       getCryptoValues()
+        Log.i("CRYPTO_", "ViewModel ${cryptoValue.value}")
     }
 
     fun getCryptoValues(){
@@ -19,14 +22,7 @@ class CryptoViewModel(private val repository: CryptoRepository):ViewModel() {
         }
     }
 
-    val cryptoValue: LiveData<CryptoData> get() =  repository.crypto
-}
+    val cryptoValue: LiveData<NetworkResult<CryptoData>> get() =  repository.crypto
 
-class CryptoViewModelFactory(private val repository: CryptoRepository):ViewModelProvider.Factory{
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(CryptoViewModel::class.java)){
-            return CryptoViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Not View Model")
-    }
+
 }

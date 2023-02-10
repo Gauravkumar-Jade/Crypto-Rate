@@ -8,25 +8,26 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
-private const val TIME_STAMP_NAME = "timeStampDetail"
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "CRYPTO_DATASTORE")
 
-private val Context.datsStore:DataStore<Preferences> by preferencesDataStore(
-    name = TIME_STAMP_NAME)
+@Singleton
+class TimeDataStore @Inject constructor(val context: Context) {
 
-private val TIME_STAMP_KEY = longPreferencesKey("timeStamp")
-
-class TimeDataStore(val context: Context) {
+    companion object{
+        val TIME_STAMP_KEY = longPreferencesKey("timeStamp")
+    }
 
     suspend fun saveTime(time:Long){
-        context.datsStore.edit {
+        context.dataStore.edit {
             it[TIME_STAMP_KEY] = time
         }
     }
 
-    val timeStampFlow:Flow<Long> = context.datsStore.data.map {
+    val getTime:Flow<Long> = context.dataStore.data.map {
         it[TIME_STAMP_KEY]?:0
     }
-
 }
