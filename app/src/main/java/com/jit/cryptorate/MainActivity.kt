@@ -71,25 +71,27 @@ class MainActivity : AppCompatActivity() {
                     progressDialog.show()
                 }
                 is NetworkResult.Success ->{
-                    bindCryptoResult(it, it.resultData!!)
+                    bindCryptoResult(it.resultData!!)
                 }
                 is NetworkResult.Error ->{
-                    Toast.makeText(this@MainActivity, it.message, Toast.LENGTH_SHORT).show()
+                    val message = "${it.code}: ${it.message}"
+                    Toast.makeText(this@MainActivity,message, Toast.LENGTH_SHORT).show()
                 }
                 is NetworkResult.NetworkError ->{
-
-                    bindCryptoResult(it, it.resultData!!)
+                    bindCryptoResult(it.resultData!!)
                     Toast.makeText(this@MainActivity, it.message, Toast.LENGTH_SHORT).show()
+                }
+                is NetworkResult.Exception ->{
+                    Toast.makeText(this@MainActivity, it.e.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
     private fun bindCryptoResult(
-        it: NetworkResult<CryptoData>,
         resultData: CryptoData
     ) {
-        adapter.submitList(it.resultData!!.data)
+        adapter.submitList(resultData.data)
         val timestamp = Date(resultData.timestamp)
         binding.titleText.text = "Last Update: $timestamp"
     }

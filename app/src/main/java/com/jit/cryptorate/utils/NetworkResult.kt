@@ -1,12 +1,14 @@
 package com.jit.cryptorate.utils
 
-sealed class NetworkResult<T>(val resultData: T? = null, val message: String? = null){
+sealed class NetworkResult<T>(){
 
-    class Success<T>(resultData: T?): NetworkResult<T>(resultData)
+    class Success<T>(val resultData: T?): NetworkResult<T>()
 
-    class Error<T>(message: String?, resultData: T? = null): NetworkResult<T>(resultData,message)
+    class Error<T>(val code:Int, val message:String?): NetworkResult<T>()
 
-    class NetworkError<T>(message: String?, resultData: T?): NetworkResult<T>(resultData, message)
+    class NetworkError<T>(val message: String?, val resultData: T?): NetworkResult<T>()
+
+    class Exception<T>(val e:Throwable): NetworkResult<T>()
 
     class Loading<T>(): NetworkResult<T>()
 }

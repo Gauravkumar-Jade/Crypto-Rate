@@ -1,22 +1,18 @@
 package com.jit.cryptorate.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
 import com.jit.cryptorate.data.CryptoData
 import com.jit.cryptorate.database.CryptoDatabase
 import com.jit.cryptorate.database.TimeDataStore
 import com.jit.cryptorate.network.CryptoApiService
 import com.jit.cryptorate.utils.NetworkResult
 import com.jit.cryptorate.utils.NetworkUtils
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class CryptoRepository @Inject constructor(
@@ -32,24 +28,28 @@ class CryptoRepository @Inject constructor(
         withContext(Dispatchers.IO){
             _crypto.postValue(NetworkResult.Loading())
             if(NetworkUtils.isInternetAvailable(context)){
-                val response = serviceApi.getCryptoData()
-                if(response.isSuccessful && response.body() != null){
+                try{
+                    val response = serviceApi.getCryptoData()
 
-                    if(database.cryptoDao().getCrypto().isNotEmpty()){
-                        database.cryptoDao().deleteData()
-                    }
-                    database.cryptoDao().insertData(response.body()!!.data)
-                    timeDataStore.saveTime(response.body()!!.timestamp)
+                    if(response.isSuccessful && response.body() != null){
 
-                    _crypto.postValue(NetworkResult.Success(response.body()!!))
-                }else
-                    if(response.errorBody() != null){
-                        val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-                        _crypto.postValue(NetworkResult.Error(errorObj.getString("message")))
+                        if(database.cryptoDao().getCrypto().isNotEmpty()){
+                            database.cryptoDao().deleteData()
+                        }
+                        database.cryptoDao().insertData(response.body()!!.data)
+                        timeDataStore.saveTime(response.body()!!.timestamp)
+
+                        _crypto.postValue(NetworkResult.Success(response.body()!!))
+                    }else{
+                        val errorObj = JSONObject(response.errorBody()!!.string())
+                        val message = errorObj.getString("message")
+                        _crypto.postValue(NetworkResult.Error(code = response.code(), message = message))
                     }
-                else{
-                        _crypto.postValue(NetworkResult.Error("Something Went Wrong !"))
-                    }
+                }catch (e:HttpException){
+                    _crypto.postValue(NetworkResult.Error(code = e.code(), message = e.message))
+                }catch (t:Throwable){
+                    _crypto.postValue(NetworkResult.Exception(t))
+                }
             }else{
 
                 if (database.cryptoDao().getCrypto().isNotEmpty()){
@@ -58,7 +58,6 @@ class CryptoRepository @Inject constructor(
 
                     timeDataStore.getTime.collect{
                         timeStamp = it
-                        Log.i("CRYPTO_", it.toString())
 
                         val cryptoData = CryptoData(data, timestamp = timeStamp!!)
                         _crypto.postValue(NetworkResult.NetworkError("No Network", cryptoData))

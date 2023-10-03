@@ -13,7 +13,6 @@ class CryptoViewModel(private val repository: CryptoRepository):ViewModel() {
 
     init {
       getCryptoValues()
-        Log.i("CRYPTO_", "ViewModel ${cryptoValue.value}")
     }
 
     fun getCryptoValues(){
