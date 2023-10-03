@@ -4,29 +4,24 @@ import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jit.cryptorate.data.CryptoData
 import com.jit.cryptorate.databinding.ActivityMainBinding
 import com.jit.cryptorate.utils.NetworkResult
 import com.jit.cryptorate.viewmodel.CryptoViewModel
-import com.jit.cryptorate.viewmodel.CryptoViewModelFactory
-import java.text.SimpleDateFormat
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 @SuppressLint("SimpleDateFormat", "SetTextI18n")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: CryptoViewModel
     private lateinit var progressDialog: ProgressDialog
-
-    @Inject
-    lateinit var viewModelFactory: CryptoViewModelFactory
 
     @Inject
     lateinit var adapter: CryptoAdapter
@@ -37,9 +32,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        (application as CryptoApplication).cryptoComponent.inject(this)
-
-        viewModel = ViewModelProvider(this,viewModelFactory).get(CryptoViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(CryptoViewModel::class.java)
 
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)

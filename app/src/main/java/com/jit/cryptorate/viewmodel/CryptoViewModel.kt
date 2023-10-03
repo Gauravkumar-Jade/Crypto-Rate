@@ -1,15 +1,18 @@
 package com.jit.cryptorate.viewmodel
 
-import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.jit.cryptorate.data.CryptoData
 import com.jit.cryptorate.repository.CryptoRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import com.jit.cryptorate.data.Data
 import com.jit.cryptorate.utils.NetworkResult
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CryptoViewModel(private val repository: CryptoRepository):ViewModel() {
+
+@HiltViewModel
+class CryptoViewModel @Inject constructor(private val repository: CryptoRepository):ViewModel() {
 
     init {
       getCryptoValues()

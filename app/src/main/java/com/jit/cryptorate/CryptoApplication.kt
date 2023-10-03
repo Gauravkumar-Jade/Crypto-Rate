@@ -1,16 +1,14 @@
 package com.jit.cryptorate
 
 import android.app.Application
-import com.jit.cryptorate.di.CryptoComponent
-import com.jit.cryptorate.di.DaggerCryptoComponent
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class CryptoApplication:Application() {
 
-    lateinit var cryptoComponent: CryptoComponent
 
     override fun onCreate() {
         super.onCreate()
 
-        cryptoComponent = DaggerCryptoComponent.factory().create(this)
     }
 }
