@@ -15,4 +15,4 @@ Simple crypto-currency rate app with online and offline support. .
 
 ## Screenshots :
 
-<img width="200" alt="Home" src="https://github.com/Gauravkumar-Jade/Crypto-Rate/main/screenshots/home.png">
+
