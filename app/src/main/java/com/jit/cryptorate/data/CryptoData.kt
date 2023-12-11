@@ -16,5 +16,6 @@ data class Data(
     var ids: Int = 0,
     var name: String?,
     var priceUsd: String?,
-    var symbol: String?
+    var symbol: String?,
+    var explorer:String?
 )

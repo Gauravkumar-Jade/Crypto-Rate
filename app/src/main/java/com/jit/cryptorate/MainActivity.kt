@@ -2,9 +2,11 @@ package com.jit.cryptorate
 
 import android.annotation.SuppressLint
 import android.app.ProgressDialog
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jit.cryptorate.data.CryptoData
@@ -12,12 +14,12 @@ import com.jit.cryptorate.databinding.ActivityMainBinding
 import com.jit.cryptorate.utils.NetworkResult
 import com.jit.cryptorate.viewmodel.CryptoViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
 @SuppressLint("SimpleDateFormat", "SetTextI18n")
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnAdapterClickListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: CryptoViewModel
@@ -44,6 +46,9 @@ class MainActivity : AppCompatActivity() {
             recylerView.adapter = adapter
             recylerView.layoutManager = manager
         }
+
+        adapter.bindListener(this)
+
 
         onInitialize()
 
@@ -87,5 +92,13 @@ class MainActivity : AppCompatActivity() {
         adapter.submitList(resultData.data)
         val timestamp = Date(resultData.timestamp)
         binding.titleText.text = "Last Update: $timestamp"
+    }
+
+    override fun onAdapterItemClick(url: String?) {
+        if(url != null)
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        else
+            Toast.makeText(this,"Unable To View", Toast.LENGTH_SHORT)
+                .show()
     }
 }

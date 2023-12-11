@@ -12,6 +12,12 @@ import javax.inject.Inject
 
 class CryptoAdapter @Inject constructor():ListAdapter<Data,CryptoAdapter.CryptoHolder>(DiffUtilCall) {
 
+    private var onAdapterClickListener:OnAdapterClickListener? = null
+
+    fun bindListener(onAdapterClickListener: OnAdapterClickListener){
+        this.onAdapterClickListener = onAdapterClickListener
+    }
+
     inner class CryptoHolder(private val binding: CustomLayoutBinding):RecyclerView.ViewHolder(binding.root){
         fun bind(cryptoData: Data){
                 binding.nameText.text = cryptoData.name
@@ -33,6 +39,7 @@ class CryptoAdapter @Inject constructor():ListAdapter<Data,CryptoAdapter.CryptoH
         holder.bind(cryptoData)
         holder.itemView.setOnClickListener {
             Toast.makeText(holder.itemView.context,cryptoData.name,Toast.LENGTH_LONG).show()
+            onAdapterClickListener?.onAdapterItemClick(cryptoData.explorer)
         }
     }
     companion object DiffUtilCall:DiffUtil.ItemCallback<Data>() {
@@ -44,4 +51,11 @@ class CryptoAdapter @Inject constructor():ListAdapter<Data,CryptoAdapter.CryptoH
             return oldItem.priceUsd == newItem.priceUsd
         }
     }
+}
+
+interface OnAdapterClickListener{
+    /**
+     * Adapter click listener
+     */
+    fun onAdapterItemClick(url:String?)
 }
